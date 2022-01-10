@@ -1,6 +1,5 @@
 from pyvis.network import Network
 import random
-import math
 
 
 def cost(node_dict: dict):
@@ -55,7 +54,7 @@ def show(graph: dict[str, dict], ans: tuple[int, list]):
     g.show('_'.join(ans[1]) + '_graph.html')
 
 
-def rand(n: int, min_cost: int, max_cost: int, min_link_num: int, max_link_num: int, g_num: int):
+def _rand(n: int, min_cost: int, max_cost: int, min_link_num: int, max_link_num: int, g_num: int):
     value = {}
 
     node_num = n - 2
@@ -74,7 +73,7 @@ def rand(n: int, min_cost: int, max_cost: int, min_link_num: int, max_link_num: 
         link_nodes = random.sample(nodes, random.randrange(min_link_num, max_link_num))
 
         for link_node in link_nodes:
-            if (node == 'S' and link_node == 'G') or (node == link_node):
+            if (node == 'S' and link_node == 'G') or nodes.index(node) >= nodes.index(link_node):
                 continue
 
             if link_node == 'G' and g_num > 1:
@@ -88,10 +87,23 @@ def rand(n: int, min_cost: int, max_cost: int, min_link_num: int, max_link_num: 
     return value
 
 
+def rand(n: int, min_cost: int, max_cost: int, min_link_num: int, max_link_num: int, g_num: int):
+    value = _rand(n, min_cost, max_cost, min_link_num, max_link_num, g_num)
+    while (not graph_check(value)) or (not solve(value, 'S', 'G')):
+        value = _rand(n, min_cost, max_cost, min_link_num, max_link_num, g_num)
+    return value
+
+
+def graph_check(graph: dict[str, dict]):
+    # isolated vertex
+    for node in graph:
+        if node != 'G' and graph[node] == {}:
+            return False
+    return True
+
+
 if __name__ == '__main__':
-    graph = rand(20, 1, 15, 2, 3, 3)
+    graph = rand(30, 1, 10, 2, 4, 6)
     ans = solve(graph, 'S', 'G')
 
-    if ans:
-        print(graph, ans)
-        show(graph, ans)
+    show(graph, ans)
