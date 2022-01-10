@@ -7,13 +7,13 @@ def cost(node_dict: dict):
     return sum(node_dict.values())
 
 
-def solve(graph, src, dest):
+def solve(graph: dict[str, dict], src: str, dest: str):
     dijkstra = {}
 
     for src_link_node in graph[src]:
         dijkstra[src_link_node] = {src: graph[src][src_link_node]}
 
-    next_nodes = list(dijkstra.keys())
+    next_nodes = [*dijkstra]
 
     while len(next_nodes) != 0:
         node = next_nodes.pop(0)
@@ -32,7 +32,7 @@ def solve(graph, src, dest):
         return None
 
 
-def show(graph: dict, ans: tuple):
+def show(graph: dict[str, dict], ans: tuple[int, list]):
     g = Network(heading=str(ans), height='700px', width='1000px')
     g.toggle_physics(False)
 
@@ -55,13 +55,12 @@ def show(graph: dict, ans: tuple):
     g.show('_'.join(ans[1]) + '_graph.html')
 
 
-def rand(n, min_cost, max_cost):
+def rand(n: int, min_cost: int, max_cost: int, min_link_num: int, max_link_num: int, g_num: int):
     value = {}
 
     node_num = n - 2
     if node_num < 1:
         return None
-    g_num = math.ceil(n / 4)
 
     nodes = ['S'] + [str(x) for x in range(node_num)] + ['G']
 
@@ -72,7 +71,7 @@ def rand(n, min_cost, max_cost):
         if node == 'G':
             continue
 
-        link_nodes = random.sample(nodes, random.randrange(2, 3))
+        link_nodes = random.sample(nodes, random.randrange(min_link_num, max_link_num))
 
         for link_node in link_nodes:
             if (node == 'S' and link_node == 'G') or (node == link_node):
@@ -90,7 +89,7 @@ def rand(n, min_cost, max_cost):
 
 
 if __name__ == '__main__':
-    graph = rand(20, 1, 15)
+    graph = rand(20, 1, 15, 2, 3, 3)
     ans = solve(graph, 'S', 'G')
 
     if ans:
