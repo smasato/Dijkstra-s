@@ -43,6 +43,14 @@ class TestDijkstra(unittest.TestCase):
         dijkstra.show(value, actual)
         self.assertEqual(expected, actual)
 
+    def test_isolated_vertex(self):
+        value = {'S': {'0': 3},
+                 '0': {},
+                 'G': {}}
+        expected = False
+        actual = dijkstra.graph_check(value)
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
